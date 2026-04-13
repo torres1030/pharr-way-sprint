@@ -305,8 +305,8 @@ function answer(idx,room){
 function showReveal(d){
   clearInterval(timerInterval);
   const correct=myAnswer===d.correctIndex;
-  const myPts=d.scores[myId]?.pts||0;
-  myScore=d.scores[myId]?.score||myScore;
+  const myPts=(d.scores[myId]&&d.scores[myId].pts)||0;
+  myScore=(d.scores[myId]&&d.scores[myId].score)||myScore;
   const rankings=d.rankings||[];
   const myRank=rankings.findIndex(r=>r.id===myId)+1||'?';
   document.getElementById('rev-icon').textContent=myAnswer===-1?'⏱':correct?'✓':'✗';
@@ -323,7 +323,8 @@ function showReveal(d){
 function showFinal(rankings){
   const m=MASCOTS.find(x=>x.id===myMascot)||{e:'?'};
   const myRank=rankings.findIndex(r=>r.id===myId)+1||rankings.length;
-  const myFinalScore=rankings.find(r=>r.id===myId)?.score||myScore;
+  const _found=rankings.find(function(r){return r.id===myId;});
+  const myFinalScore=(_found&&_found.score)||myScore;
   document.getElementById('fin-mascot').textContent=m.e;
   document.getElementById('fin-rank-badge').textContent='#'+myRank;
   document.getElementById('fin-name').textContent=myName;
