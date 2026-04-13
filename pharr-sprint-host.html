@@ -242,7 +242,16 @@ function genCode(){ return Math.random().toString(36).substr(2,6).toUpperCase();
 
 function initPeer(){
   roomCode = genCode();
-  peer = new Peer(roomCode, {host:'0.peerjs.com',port:443,secure:true,path:'/',debug:0});
+  peer = new Peer(roomCode, {host:'0.peerjs.com',port:443,secure:true,path:'/',debug:0,
+    config:{iceServers:[
+      {urls:'stun:stun.l.google.com:19302'},
+      {urls:'stun:stun1.l.google.com:19302'},
+      {urls:['turn:eu-0.turn.peerjs.com:3478','turn:us-0.turn.peerjs.com:3478'],username:'peerjs',credential:'peerjsp'},
+      {urls:'turn:openrelay.metered.ca:80',username:'openrelayproject',credential:'openrelayproject'},
+      {urls:'turn:openrelay.metered.ca:443',username:'openrelayproject',credential:'openrelayproject'},
+      {urls:'turn:openrelay.metered.ca:443?transport=tcp',username:'openrelayproject',credential:'openrelayproject'}
+    ]}
+  });
   peer.on('open', ()=>{ setupLobby(); showView('lobby'); });
   peer.on('connection', onConnection);
   peer.on('error', (e)=>{ if(e.type==='unavailable-id'){ roomCode=genCode(); initPeer(); } });

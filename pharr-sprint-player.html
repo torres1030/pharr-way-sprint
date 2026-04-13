@@ -259,8 +259,17 @@ function doJoin(){
 }
 
 function connectToGame(room){
-  document.getElementById('conn-txt').textContent='Connecting...';
-  myPeer = new Peer(undefined,{host:'0.peerjs.com',port:443,secure:true,path:'/',debug:0});
+  document.getElementById('conn-txt').textContent='Connecting...'; document.getElementById('conn-sub').textContent='This can take 15-20 seconds on mobile';
+  myPeer = new Peer(undefined,{host:'0.peerjs.com',port:443,secure:true,path:'/',debug:0,
+    config:{iceServers:[
+      {urls:'stun:stun.l.google.com:19302'},
+      {urls:'stun:stun1.l.google.com:19302'},
+      {urls:['turn:eu-0.turn.peerjs.com:3478','turn:us-0.turn.peerjs.com:3478'],username:'peerjs',credential:'peerjsp'},
+      {urls:'turn:openrelay.metered.ca:80',username:'openrelayproject',credential:'openrelayproject'},
+      {urls:'turn:openrelay.metered.ca:443',username:'openrelayproject',credential:'openrelayproject'},
+      {urls:'turn:openrelay.metered.ca:443?transport=tcp',username:'openrelayproject',credential:'openrelayproject'}
+    ]}
+  });
   myPeer.on('open',()=>{
     document.getElementById('conn-txt').textContent='Joining room...';
     hostConn = myPeer.connect(room);
@@ -277,7 +286,7 @@ function connectToGame(room){
   });
   setTimeout(()=>{
     if(!hostConn||!hostConn.open){ showErr('Could not reach the host. Check the room code.'); document.getElementById('join-btn').disabled=false; showView('join'); }
-  },8000);
+  },30000);
 }
 
 function showErr(msg){ setErr(msg); showView('join'); document.getElementById('join-btn').disabled=false; }
